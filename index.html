@@ -318,9 +318,9 @@ const cnt=(arr,k)=>arr.reduce((a,r)=>{a[r[k]]=(a[r[k]]||0)+1;return a},{});
 const topN=(o,n)=>Object.entries(o).sort((a,b)=>b[1]-a[1]).slice(0,n);
 const sc=c=>c.replace('United States of America','USA').replace('United Kingdom','UK');
 const sd=d=>({'13" Standard Laptop - Mac':'13" Mac','16" Development Laptop - Mac (Max)':'16" Mac Max','14" Standard Laptop - Windows':'14" Windows','14" Development Laptop - Mac (Max)':'14" Mac Max'}[d]||d);
-const pb=p=>p.includes('1')?'<span class="badge-status b-p1">P1 Exec</span>':p.includes('2')?'<span class="badge-status b-p2">P2</span>':'<span class="badge-status b-p3">P3</span>';
-const db=s=>{const cls={Delivered:'b-delivered','Returned back to SF':'b-rts',Lost:'b-lost','Not Shipped':'b-notshipped'},ic={Delivered:'&#10003;','Returned back to SF':'&#8617;',Lost:'&#10007;','Not Shipped':'&mdash;'};return '<span class="badge-status '+(cls[s]||'')+'">'+(ic[s]||'')+' '+s+'</span>';};
-const sb=s=>{const c={Shipped:'b-shipped',New:'b-new',Closed:'b-closed'};return '<span class="badge-status '+(c[s]||'')+'">'+s+'</span>';};
+const pb=p=>p.includes('1')?"<span class='badge-status b-p1'>P1 Exec</span>":p.includes('2')?"<span class='badge-status b-p2'>P2</span>":"<span class='badge-status b-p3'>P3</span>";
+const db=s=>{const cls={Delivered:'b-delivered','Returned back to SF':'b-rts',Lost:'b-lost','Not Shipped':'b-notshipped'},ic={Delivered:'&#10003;','Returned back to SF':'&#8617;',Lost:'&#10007;','Not Shipped':'&mdash;'};return "<span class='badge-status "+(cls[s]||'')+"'>"+(ic[s]||'')+' '+s+'</span>';};
+const sb=s=>{const c={Shipped:'b-shipped',New:'b-new',Closed:'b-closed'};return "<span class='badge-status "+(c[s]||'')+"'>"+s+'</span>';};
 const rc=s=>s==='Returned back to SF'?'row-rts':s==='Lost'?'row-lost':s==='Not Shipped'?'row-notshipped':'';
 function renderAll(){renderSummary();renderKPIs();renderProg();renderCharts();renderRank();renderTable();}
 function renderSummary(){
@@ -368,7 +368,7 @@ function renderCharts(){
 }
 function renderRank(){
   const t=filtered.length,cr=topN(cnt(filtered,'country'),8),mx=cr[0]?.[1]||1;
-  document.getElementById('country-rank-table').innerHTML=cr.map(([n,c],i)=>'<div class="rank-row" onclick="drillCountry(''+n.replace(/'/g,"\'")+'')"><div class="rank-num">'+(i+1)+'</div><div class="rank-name">'+n+'</div><div class="rank-count">'+c+'</div><div class="rank-pct">'+((c/t)*100).toFixed(1)+'%</div><div class="rank-bar"><div class="rank-bar-fill" style="width:'+((c/mx)*100).toFixed(0)+'%;background:'+PAL[i]+';"></div></div></div>').join('');
+  document.getElementById('country-rank-table').innerHTML=cr.map(([n,c],i)=>'<div class="rank-row" data-country="'+n.replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" onclick="rankClick(this)"><div class="rank-num">'+(i+1)+'</div><div class="rank-name">'+n+'</div><div class="rank-count">'+c+'</div><div class="rank-pct">'+((c/t)*100).toFixed(1)+'%</div><div class="rank-bar"><div class="rank-bar-fill" style="width:'+((c/mx)*100).toFixed(0)+'%;background:'+PAL[i]+';"></div></div></div>').join('');
 }
 function renderTable(){
   const q=document.getElementById('table-search').value.toLowerCase();
@@ -412,13 +412,15 @@ function drillCountry(country){
   mkBar('drill-chart-right',Object.keys(cnt(rows,'laptopChoice')).map(sd),Object.values(cnt(rows,'laptopChoice')),PAL,false);
   updateBC();document.getElementById('drill-panel').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
+function rankClick(el){drillCountry(el.getAttribute('data-country'));}
 function updateBC(){
   document.getElementById('breadcrumb').classList.remove('hidden');
   let h='';
-  if(drill.region)h+='<span class="bc-chip" onclick="drillRegion(''+drill.region+'')">'+drill.region+'</span>';
+  if(drill.region)h+='<span class="bc-chip" data-region="'+drill.region.replace(/"/g,'&quot;')+'" onclick="bcRegionClick(this)">'+drill.region+'</span>';
   if(drill.country)h+='<span class="bc-sep">&#8250;</span><span class="bc-chip">'+drill.country+'</span>';
   document.getElementById('bc-content').innerHTML=h;
 }
+function bcRegionClick(el){drillRegion(el.getAttribute('data-region'));}
 function clearDrill(){drill.region=null;drill.country=null;document.getElementById('drill-panel').classList.remove('visible');document.getElementById('breadcrumb').classList.add('hidden');}
 function filterByDelivery(s){document.getElementById('f-delivery').value=s;applyFilters();}
 function filterByPriority(s){document.getElementById('f-priority').value=s;applyFilters();}
