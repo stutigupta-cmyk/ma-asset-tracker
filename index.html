@@ -386,7 +386,8 @@ function renderRank(){
 function renderTable(){
   const q=document.getElementById('table-search').value.toLowerCase();
   let rows=filtered.filter(r=>!q||r.name.toLowerCase().includes(q)||r.emailMA.toLowerCase().includes(q)||r.city.toLowerCase().includes(q)||r.country.toLowerCase().includes(q)||r.caseNum.includes(q));
-  rows.sort((a,b)=>(a[sortKey]||'').toString().localeCompare((b[sortKey]||'').toString())*sortDir);
+  const prio=s=>s==='Lost'?0:s==='Returned back to SF'?1:2;
+  rows.sort((a,b)=>{const pd=prio(a.deliveryStatus)-prio(b.deliveryStatus);if(pd!==0)return pd;return(a[sortKey]||'').toString().localeCompare((b[sortKey]||'').toString())*sortDir;});
   const t=rows.length,tp=Math.max(1,Math.ceil(t/PAGE_SIZE));
   page=Math.min(page,tp);const s=(page-1)*PAGE_SIZE,e=Math.min(s+PAGE_SIZE,t);
   document.getElementById('table-info').textContent='Showing '+(s+1)+'–'+e+' of '+t+' records';
