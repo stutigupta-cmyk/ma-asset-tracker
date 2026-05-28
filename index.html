@@ -117,7 +117,7 @@
 <div class="header">
   <div class="header-left">
     <h1>&#128230; DET M&amp;A Asset Delivery Tracker</h1>
-    <p>Laptop Provisioning &amp; Delivery Analytics &middot; Qualified Acquisition</p>
+    <p id="header-tagline">Laptop Provisioning &amp; Delivery Analytics &middot; Qualified Acquisition</p>
   </div>
   <div class="header-right">
     <div class="timestamp" id="ts"></div>
@@ -449,6 +449,8 @@ function resetFilters(){
   filtered=[...RAW];page=1;clearDrill();renderAll();
 }
 function handleMASelect(sel){
+  const tags={qualified:'Laptop Provisioning &amp; Delivery Analytics &middot; Qualified Acquisition',future:'Laptop Provisioning &amp; Delivery Analytics &middot; Future M&amp;A'};
+  document.getElementById('header-tagline').innerHTML=tags[sel.value]||tags.qualified;
   if(sel.value==='future'){
     filtered=[];
     document.getElementById('summary-text').innerHTML='<em style="color:var(--text3)">No data available yet for this acquisition.</em>';
