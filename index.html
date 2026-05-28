@@ -129,7 +129,7 @@
   <span class="ma-selector-label">&#128193; Acquisition:</span>
   <select class="ma-selector" onchange="handleMASelect(this)">
     <option value="qualified" selected>Qualified</option>
-    <option value="future" disabled>Future M&amp;A (Coming Soon)</option>
+    <option value="future">Future M&amp;A (Coming Soon)</option>
   </select>
 </div>
 
@@ -448,7 +448,28 @@ function resetFilters(){
   ['f-region','f-priority','f-vendor','f-delivery','f-laptop'].forEach(id=>{document.getElementById(id).value='';document.getElementById(id).classList.remove('active-filter');});
   filtered=[...RAW];page=1;clearDrill();renderAll();
 }
-function handleMASelect(sel){if(sel.value!=='qualified'){alert('Coming soon! Data for this acquisition is not yet available.');sel.value='qualified';}}
+function handleMASelect(sel){
+  if(sel.value==='future'){
+    filtered=[];
+    document.getElementById('summary-text').innerHTML='<em style="color:var(--text3)">No data available yet for this acquisition.</em>';
+    document.getElementById('kpi-total').textContent='—';
+    document.getElementById('kpi-delivered').textContent='—';
+    document.getElementById('kpi-delivered-sub').textContent='delivery rate';
+    document.getElementById('kpi-countries').textContent='—';
+    document.getElementById('kpi-countries-sub').textContent='global coverage';
+    document.getElementById('kpi-devices').textContent='—';
+    document.getElementById('prio-bars').innerHTML='<p style="color:var(--text3);font-size:0.8rem;padding:10px 0">No data yet.</p>';
+    document.getElementById('region-bars').innerHTML='<p style="color:var(--text3);font-size:0.8rem;padding:10px 0">No data yet.</p>';
+    document.getElementById('country-rank-table').innerHTML='<p style="color:var(--text3);font-size:0.8rem;padding:10px 0">No data yet.</p>';
+    document.getElementById('table-body').innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--text3);padding:28px">No records available for this acquisition.</td></tr>';
+    document.getElementById('table-info').textContent='';
+    document.getElementById('page-btns').innerHTML='';
+    ['chart-delivery','chart-priority','chart-region','chart-country','chart-laptop','chart-delivery-region','drill-chart-left','drill-chart-right'].forEach(id=>dch(id));
+    clearDrill();
+  } else {
+    filtered=[...RAW];page=1;clearDrill();renderAll();
+  }
+}
 function tick(){document.getElementById('ts').textContent=new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});}
 tick();setInterval(tick,1000);
 renderAll();
